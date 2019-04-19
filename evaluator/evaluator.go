@@ -32,19 +32,27 @@ func Eval(node ast.Node) object.Object {
 		return evalStatements(node.Statements)
 	case *ast.IfExpression:
 		return evalIfExpression(node)
+	case *ast.ReturnStatement:
+		val := Eval(node.ReturnValue)
+		return &object.ReturnValue{Value: val}
 	}
 
 	return nil
 }
 
 func evalStatements(stmts []ast.Statement) object.Object {
-	var result object.Object
+	var res object.Object
 
 	for _, statement := range stmts {
-		result = Eval(statement)
+		res = Eval(statement)
+
+		if retValue, ok := res.(*object.ReturnValue); ok {
+			return retValue.Value
+		}
+
 	}
 
-	return result
+	return res
 }
 
 func nativeBoolToBooleanObject(input bool) *object.Boolean {
