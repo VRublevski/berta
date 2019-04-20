@@ -3,7 +3,9 @@ package repl
 import (
 	"bufio"
 	"fmt"
+	"github.com/user/courseWork/evaluator"
 	"github.com/user/courseWork/lexer"
+	"github.com/user/courseWork/object"
 	"github.com/user/courseWork/parser"
 	"io"
 )
@@ -12,10 +14,12 @@ const PROMT = ">> "
 
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
+	env := object.NewEnvironment()
 
 	for {
 		fmt.Printf(PROMT)
 		scanned := scanner.Scan()
+
 		if !scanned {
 			return
 		}
@@ -31,8 +35,11 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		io.WriteString(out, program.String())
-		io.WriteString(out, "\n")
+		evaluated := evaluator.Eval(program, env)
+		if evaluated != nil {
+			io.WriteString(out, program.String())
+			io.WriteString(out, "\n")
+		}
 	}
 }
 
