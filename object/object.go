@@ -10,7 +10,7 @@ import (
 const (
 	INTEGER_OBJ      = "INTEGER"
 	BOOLEAN_OBJ      = "BOOLEAN"
-	NIL_OBJ    = "NIL"
+	NIL_OBJ    		 = "NIL"
 	RETURN_VALUE_OBJ = "RETURN_VALUE"
 	FUNCTION_OBJ     = "FUNCTION"
 	ERROR_OBJ        = "ERROR"
@@ -57,7 +57,7 @@ func (e *Error) Type() ObjectType { return ERROR_OBJ }
 func (e *Error) Inspect() string  { return "ERROR: " + e.Message }
 
 type Function struct {
-	Parametres []*ast.Identifier
+	Parameters []*ast.Identifier
 	Body       *ast.BlockStatement
 	Env        *Environment
 }
@@ -67,7 +67,7 @@ func (f *Function) Inspect() string {
 	var out bytes.Buffer
 
 	params := []string{}
-	for _, p := range f.Parametres {
+	for _, p := range f.Parameters {
 		params = append(params, p.String())
 	}
 
