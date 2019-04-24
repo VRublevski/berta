@@ -73,6 +73,9 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.LPAREN, l.ch)
 	case ')':
 		tok = newToken(token.RPAREN, l.ch)
+	case '"':
+		tok.Type = token.STRING
+		tok.Literal = l.readString()
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF
@@ -99,6 +102,7 @@ func newToken(tokenType token.TokenType, ch byte) token.Token {
 }
 
 
+
 func (l *Lexer)readWhile(cond func(c byte)bool) string {
 	position := l.position
 	for cond(l.ch){
@@ -107,6 +111,16 @@ func (l *Lexer)readWhile(cond func(c byte)bool) string {
 	return l.input[position:l.position]
 }
 
+func (l *Lexer) readString() string {
+	position := l.position + 1
+	for {
+		l.readChar()
+		if l.ch == '"' || l.ch == 0 {
+			break
+		}
+	}
+	return l.input[position:l.position]
+}
 
 func (l *Lexer) skipWhitespace() {
 	for l.ch == ' ' || l.ch == '\n' || l.ch == '\t' || l.ch == '\r' {
