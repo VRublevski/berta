@@ -1,9 +1,12 @@
 package evaluator
 
-import "github.com/user/courseWork/object"
+import (
+	"fmt"
+	"github.com/user/courseWork/object"
+)
 
 var builtins = map[string]*object.Builtin{
-	"len": &object.Builtin{
+	"len": {
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 1 {
 				return newError("wrong number of arguments. got=%d, want=1",
@@ -18,6 +21,15 @@ var builtins = map[string]*object.Builtin{
 			default:
 				return newError("argument to `len` not supported, got %s", args[0].Type())
 			}
+		},
+	},
+	"println": {
+		Fn: func(args ...object.Object) object.Object {
+			for _, arg := range args {
+				fmt.Println(arg.Inspect())
+			}
+
+			return NIL
 		},
 	},
 }
