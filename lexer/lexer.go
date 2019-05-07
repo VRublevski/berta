@@ -41,6 +41,16 @@ func (l *Lexer) NextToken() token.Token {
 		} else {
 			tok = newToken(token.ASSIGN, l.ch)
 		}
+	case '&':
+		if l.peackChar() == '&' {
+			l.readChar()
+			tok = token.Token{token.AND, "&&"}
+		}
+	case '|':
+		if l.peackChar() == '|' {
+			l.readChar()
+			tok = token.Token{token.OR, "||"}
+		}
 	case '+':
 		tok = newToken(token.PLUS, l.ch)
 	case '-':
@@ -105,11 +115,9 @@ func newToken(tokenType token.TokenType, ch byte) token.Token {
 	return token.Token{Type: tokenType, Literal: string(ch)}
 }
 
-
-
-func (l *Lexer)readWhile(cond func(c byte)bool) string {
+func (l *Lexer) readWhile(cond func(c byte) bool) string {
 	position := l.position
-	for cond(l.ch){
+	for cond(l.ch) {
 		l.readChar()
 	}
 	return l.input[position:l.position]

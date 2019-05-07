@@ -16,6 +16,8 @@ const (
 	LT       = "<"
 	GT       = ">"
 
+	AND    = "&&"
+	OR     = "||"
 	EQ     = "=="
 	NOT_EQ = "!="
 
