@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	NIL  = &object.NIL{}
+	NIL   = &object.NIL{}
 	TRUE  = &object.Boolean{Value: true}
 	FALSE = &object.Boolean{Value: false}
 )
@@ -154,6 +154,8 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 		return evalIntegerInfixExpression(operator, left, right)
 	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
 		return evalStringInfixExpression(operator, left, right)
+	case left.Type() == object.BOOLEAN_OBJ && right.Type() == object.BOOLEAN_OBJ:
+		return evalBooleanInfixExpression(operator, left, right)
 	case operator == "==":
 		return nativeBoolToBooleanObject(left == right)
 	case operator == "!=":
@@ -242,6 +244,39 @@ func evalStringInfixExpression(operator string, left, right object.Object) objec
 	leftVal := left.(*object.String).Value
 	rightVal := right.(*object.String).Value
 	return &object.String{Value: leftVal + rightVal}
+}
+
+func evalBooleanInfixExpression(operator string, left, right object.Object) object.Object {
+	leftVal := left.(*object.Boolean).Value
+	rightVal := right.(*object.Boolean).Value
+	switch operator {
+	case "&&":
+		if leftVal && rightVal {
+			return TRUE
+		}else {
+			return FALSE
+		}
+	case "||":
+		if leftVal || rightVal {
+			return TRUE
+		}else {
+			return FALSE
+		}
+	case "==":
+		if leftVal == rightVal{
+			return TRUE
+		}else {
+			return FALSE
+		}
+	case "!=":
+		if leftVal != rightVal{
+			return TRUE
+		}else{
+			return FALSE
+		}
+	default:
+		return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
+	}
 }
 
 func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Object {
