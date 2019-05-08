@@ -42,6 +42,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return evalBlockStatements(node, env)
 	case *ast.IfExpression:
 		return evalIfExpression(node, env)
+	case *ast.ForLoopExpression:
+		return evalForLoopxpression(node, env)
 	case *ast.ReturnStatement:
 		val := Eval(node.ReturnValue, env)
 		if isError(val) {
@@ -59,6 +61,9 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if isError(val) {
 			return val
 		}
+		if _, ok := env.Get(node.Name.String()); !ok {
+			return newError("identifier not found: %s", node.Name.String())
+		}
 		env.Set(node.Name.String(), val)
 	case *ast.Identifier:
 		return evalIdentifier(node, env)
@@ -75,7 +80,6 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if len(args) == 1 && isError(args[0]) {
 			return args[0]
 		}
-
 		return applyFunction(function, args)
 	case *ast.IndexExpression:
 		left := Eval(node.Left, env)
@@ -125,8 +129,7 @@ func evalBlockStatements(block *ast.BlockStatement, env *object.Environment) obj
 		res = Eval(statement, env)
 
 		if res != nil {
-			rt := res.Type()
-			if rt == object.RETURN_VALUE_OBJ || rt == object.ERROR_OBJ { //return can propagate further up
+			if isReturn(res) || isError(res) { //return can propagate further up
 				return res
 			}
 		}
@@ -349,6 +352,13 @@ func isError(obj object.Object) bool {
 	return false
 }
 
+func isReturn(obj object.Object) bool {
+	if obj != nil {
+		return obj.Type() == object.RETURN_VALUE_OBJ
+	}
+	return false
+}
+
 func applyFunction(fn object.Object, args []object.Object) object.Object {
 
 	switch fn := fn.(type) {
@@ -379,5 +389,45 @@ func unwrawpReturnValue(obj object.Object) object.Object {
 		return returnValue.Value
 	}
 
+	return obj
+}
+
+func evalForLoopxpression(fle *ast.ForLoopExpression, env *object.Environment) object.Object {
+	if rtn, ok := fle.Init.(*ast.ReturnStatement); ok {
+		return newError("for loop initial declaration is invalid: %s", rtn.String())
+	}
+
+	var (
+		obj         object.Object = NIL
+		extendedEnv *object.Environment
+	)
+	if _, ok := fle.Init.(*ast.VarStatement); ok {
+		extendedEnv = object.NewEnclosedEnvironment(env)
+	} else {
+		extendedEnv = env
+	}
+
+	init := Eval(fle.Init, extendedEnv)
+	if isError(init) {
+		return init
+	}
+	condition := Eval(fle.Condition, extendedEnv)
+	if isError(condition) {
+		return condition
+	}
+	for isTrue(condition) {
+		obj = Eval(fle.Body, extendedEnv)
+		if isError(obj) || isReturn(obj) {
+			return obj
+		}
+		step := Eval(fle.Step, extendedEnv)
+		if isError(step) {
+			return step
+		}
+		condition = Eval(fle.Condition, extendedEnv)
+		if isError(condition) {
+			return condition
+		}
+	}
 	return obj
 }
