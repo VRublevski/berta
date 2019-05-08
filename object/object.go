@@ -9,8 +9,9 @@ import (
 
 const (
 	INTEGER_OBJ      = "INTEGER"
+	DOUBLE_OBJ       = "DOUBLE"
 	BOOLEAN_OBJ      = "BOOLEAN"
-	NIL_OBJ    		 = "NIL"
+	NIL_OBJ          = "NIL"
 	RETURN_VALUE_OBJ = "RETURN_VALUE"
 	FUNCTION_OBJ     = "FUNCTION"
 	STRING_OBJ       = "STRING"
@@ -32,6 +33,13 @@ type Integer struct {
 
 func (i *Integer) Type() ObjectType { return INTEGER_OBJ }
 func (i *Integer) Inspect() string  { return fmt.Sprintf("%d", i.Value) }
+
+type Double struct {
+	Value float64
+}
+
+func (d *Double) Type() ObjectType { return DOUBLE_OBJ }
+func (d *Double) Inspect() string  { return fmt.Sprintf("%f", d.Value) }
 
 type Boolean struct {
 	Value bool
