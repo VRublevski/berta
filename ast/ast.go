@@ -71,6 +71,28 @@ func (vs *VarStatement) TokenLiteral() string {
 	return vs.Token.Literal
 }
 
+type AssignStatement struct {
+	Token token.Token
+	Name *Identifier
+	Value Expression
+}
+
+func (as *AssignStatement) stmtNode() {}
+
+func (as *AssignStatement) TokenLiteral() string {
+	return as.Token.Literal
+}
+
+func (as *AssignStatement) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(as.Name.String())
+	out.WriteString(" = ")
+	out.WriteString(as.Value.String())
+
+	return out.String()
+}
+
 type Identifier struct {
 	Token token.Token
 	Value string
@@ -149,7 +171,7 @@ type StringLiteral struct {
 	Value string
 }
 
-func (sl *StringLiteral) exprNode()      {}
+func (sl *StringLiteral) exprNode()            {}
 func (sl *StringLiteral) TokenLiteral() string { return sl.Token.Literal }
 func (sl *StringLiteral) String() string       { return sl.Token.Literal }
 
@@ -158,7 +180,7 @@ type ArrayLiteral struct {
 	Elements []Expression
 }
 
-func (al *ArrayLiteral) exprNode()      {}
+func (al *ArrayLiteral) exprNode()            {}
 func (al *ArrayLiteral) TokenLiteral() string { return al.Token.Literal }
 func (al *ArrayLiteral) String() string {
 	var out bytes.Buffer
@@ -308,7 +330,7 @@ type IndexExpression struct {
 	Index Expression
 }
 
-func (ie *IndexExpression) exprNode()      {}
+func (ie *IndexExpression) exprNode()            {}
 func (ie *IndexExpression) TokenLiteral() string { return ie.Token.Literal }
 func (ie *IndexExpression) String() string {
 	var out bytes.Buffer

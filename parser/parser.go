@@ -71,6 +71,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.LBRACKET, p.parseArrayLiteral)
 
 	p.infixParseFns = make(map[token.TokenType]infixParseFn)
+	p.registerInfix(token.ASSIGN, p.parseInfixExpression)
 	p.registerInfix(token.OR, p.parseInfixExpression)
 	p.registerInfix(token.AND, p.parseInfixExpression)
 	p.registerInfix(token.LPAREN, p.parseCallExpression)
@@ -111,11 +112,13 @@ func (p *Parser) ParseProgram() *ast.Program {
 }
 
 func (p *Parser) parseStatement() ast.Statement {
-	switch p.curToken.Type {
-	case token.VAR:
+	switch {
+	case p.curToken.Type == token.VAR:
 		return p.parseVarStatement()
-	case token.RETURN:
+	case p.curToken.Type == token.RETURN:
 		return p.parseReturnStatement()
+	case p.curToken.Type == token.IDENT && p.peekToken.Type == token.ASSIGN:
+		return p.parseAssignStatement()
 	default:
 		return p.parseExpressionStatement()
 	}
@@ -156,6 +159,19 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 		p.nextToken()
 	}
 
+	return stmt
+}
+
+func (p *Parser) parseAssignStatement() *ast.AssignStatement {
+	stmt := &ast.AssignStatement{}
+	stmt.Name = p.parseIdentifier().(*ast.Identifier)
+	p.expectPeek(token.ASSIGN)
+	stmt.Token = p.curToken
+	p.nextToken()
+	stmt.Value = p.parseExpression(LOWEST)
+	if p.peekTokenIs(token.SEMICOLON) {
+		p.nextToken()
+	}
 	return stmt
 }
 
