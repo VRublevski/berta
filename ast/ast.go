@@ -73,7 +73,7 @@ func (vs *VarStatement) TokenLiteral() string {
 
 type AssignStatement struct {
 	Token token.Token
-	Name *Identifier
+	Name  *Identifier
 	Value Expression
 }
 
@@ -340,6 +340,33 @@ func (ie *IndexExpression) String() string {
 	out.WriteString("[")
 	out.WriteString(ie.Index.String())
 	out.WriteString("])")
+
+	return out.String()
+}
+
+type ForLoopExpression struct {
+	Token     token.Token
+	Init      Statement
+	Condition Expression
+	Step      *AssignStatement
+	Body      *BlockStatement
+}
+
+func (fle *ForLoopExpression) exprNode()            {}
+func (fle *ForLoopExpression) TokenLiteral() string { return fle.Token.Literal }
+func (fle *ForLoopExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("for ")
+	out.WriteString("(")
+	out.WriteString(fle.Init.String())
+	out.WriteString(";")
+	out.WriteString(fle.Condition.String())
+	out.WriteString(";")
+	out.WriteString(fle.Step.String())
+	out.WriteString(";")
+	out.WriteString(")")
+	out.WriteString(fle.Body.String())
 
 	return out.String()
 }

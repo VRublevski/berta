@@ -58,6 +58,7 @@ func New(l *lexer.Lexer) *Parser {
 	p := &Parser{l: l, errors: []string{}}
 
 	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
+	p.registerPrefix(token.FOR, p.parseForLoopExpression)
 	p.registerPrefix(token.FUNCTION, p.parseFunctionLiteral)
 	p.registerPrefix(token.IF, p.parseIfExpression)
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
@@ -449,6 +450,12 @@ func (p *Parser) peekError(t token.TokenType) {
 	p.errors = append(p.errors, msg)
 }
 
+func (p *Parser) currentError(t token.TokenType){
+	msg := fmt.Sprintf("expected current token to be %s, got %s instead",
+		t, p.peekToken.Type)
+	p.errors = append(p.errors, msg)
+}
+
 func (p *Parser) registerPrefix(tokenType token.TokenType, fn prefixParseFn) {
 	p.prefixParseFns[tokenType] = fn
 }
@@ -479,4 +486,54 @@ func (p *Parser) parseExpressionList(end token.TokenType) []ast.Expression {
 	}
 
 	return list
+}
+
+func (p *Parser) parseForLoopExpression() ast.Expression {
+	expression := &ast.ForLoopExpression{Token: p.curToken}
+
+	if !p.expectPeek(token.LPAREN) {
+		return nil
+	}
+	p.nextToken()
+
+	var init ast.Statement
+	switch {
+	case p.curTokenIs(token.VAR):
+		init = p.parseVarStatement()
+	case p.peekTokenIs(token.ASSIGN):
+		init = p.parseAssignStatement()
+	default:
+		p.currentError(token.VAR)
+		return nil
+	}
+
+	expression.Init = init
+
+	if !p.curTokenIs(token.SEMICOLON){
+		p.currentError(token.SEMICOLON)
+		return nil
+	}
+
+	p.nextToken()
+
+	condition := p.parseExpression(LOWEST)
+	expression.Condition = condition
+
+	if !p.expectPeek(token.SEMICOLON) {
+		return nil
+	}
+	p.nextToken()
+
+	step := p.parseAssignStatement()
+	expression.Step = step
+
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+	p.nextToken()
+
+	body := p.parseBlockStatement()
+	expression.Body = body
+
+	return expression
 }
