@@ -4,8 +4,9 @@ const (
 	ILLEGAL = "ILLEGAL"
 	EOF     = "EOF"
 
-	IDENT = "IDENT"
-	INT   = "INT"
+	DOUBLE = "DOUBLE"
+	IDENT  = "IDENT"
+	INT    = "INT"
 
 	ASSIGN   = "="
 	PLUS     = "+"

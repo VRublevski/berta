@@ -99,8 +99,16 @@ func (l *Lexer) NextToken() token.Token {
 			tok.Type = token.LookupIdent(tok.Literal)
 			return tok
 		} else if isDigit(l.ch) {
-			tok.Literal = l.readWhile(isDigit)
-			tok.Type = token.INT
+			whole := l.readWhile(isDigit)
+			if l.ch == '.' {
+				l.readChar()
+				fractional := l.readWhile(isDigit)
+				tok.Literal = whole + "." + fractional
+				tok.Type = token.DOUBLE
+			} else {
+				tok.Literal = whole
+				tok.Type = token.INT
+			}
 			return tok
 		} else {
 			tok = newToken(token.ILLEGAL, l.ch)
