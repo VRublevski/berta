@@ -157,6 +157,15 @@ func (il *IntegerLiteral) exprNode()            {}
 func (il *IntegerLiteral) TokenLiteral() string { return il.Token.Literal }
 func (il *IntegerLiteral) String() string       { return il.Token.Literal }
 
+type DoubleLiteral struct {
+	Token token.Token
+	Value float64
+}
+
+func (dl *DoubleLiteral) exprNode()            {}
+func (dl *DoubleLiteral) TokenLiteral() string { return dl.Token.Literal }
+func (dl *DoubleLiteral) String() string       { return dl.Token.Literal }
+
 type Boolean struct {
 	Token token.Token
 	Value bool

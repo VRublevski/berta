@@ -63,6 +63,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.IF, p.parseIfExpression)
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
 	p.registerPrefix(token.INT, p.parseIntegerLiteral)
+	p.registerPrefix(token.DOUBLE, p.parseDoubleLiteral)
 	p.registerPrefix(token.TRUE, p.parseBoolean)
 	p.registerPrefix(token.FALSE, p.parseBoolean)
 	p.registerPrefix(token.BANG, p.parsePrefixExpression)
@@ -283,6 +284,21 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 	return lit
 }
 
+func (p *Parser) parseDoubleLiteral() ast.Expression {
+	lit := &ast.DoubleLiteral{Token: p.curToken}
+
+	value, err := strconv.ParseFloat(p.curToken.Literal, 64)
+	if err != nil {
+		msg := fmt.Sprintf("could not parse %q as double", p.curToken.Literal)
+		p.errors = append(p.errors, msg)
+		return nil
+	}
+
+	lit.Value = value
+
+	return lit
+}
+
 func (p *Parser) parseArrayLiteral() ast.Expression {
 	array := &ast.ArrayLiteral{Token: p.curToken}
 
@@ -450,7 +466,7 @@ func (p *Parser) peekError(t token.TokenType) {
 	p.errors = append(p.errors, msg)
 }
 
-func (p *Parser) currentError(t token.TokenType){
+func (p *Parser) currentError(t token.TokenType) {
 	msg := fmt.Sprintf("expected current token to be %s, got %s instead",
 		t, p.peekToken.Type)
 	p.errors = append(p.errors, msg)
@@ -509,7 +525,7 @@ func (p *Parser) parseForLoopExpression() ast.Expression {
 
 	expression.Init = init
 
-	if !p.curTokenIs(token.SEMICOLON){
+	if !p.curTokenIs(token.SEMICOLON) {
 		p.currentError(token.SEMICOLON)
 		return nil
 	}
