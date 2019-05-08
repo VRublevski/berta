@@ -54,6 +54,12 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return val
 		}
 		env.Set(node.Name.Value, val)
+	case *ast.AssignStatement:
+		val := Eval(node.Value, env)
+		if isError(val) {
+			return val
+		}
+		env.Set(node.Name.String(), val)
 	case *ast.Identifier:
 		return evalIdentifier(node, env)
 	case *ast.FunctionLiteral:
@@ -253,25 +259,25 @@ func evalBooleanInfixExpression(operator string, left, right object.Object) obje
 	case "&&":
 		if leftVal && rightVal {
 			return TRUE
-		}else {
+		} else {
 			return FALSE
 		}
 	case "||":
 		if leftVal || rightVal {
 			return TRUE
-		}else {
+		} else {
 			return FALSE
 		}
 	case "==":
-		if leftVal == rightVal{
+		if leftVal == rightVal {
 			return TRUE
-		}else {
+		} else {
 			return FALSE
 		}
 	case "!=":
-		if leftVal != rightVal{
+		if leftVal != rightVal {
 			return TRUE
-		}else{
+		} else {
 			return FALSE
 		}
 	default:
