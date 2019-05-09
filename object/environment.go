@@ -28,3 +28,12 @@ func (e *Environment) Set(name string, val Object) Object {
 	e.store[name] = val
 	return val
 }
+
+func (e *Environment) LookupEnvironment(name string) (*Environment, bool) {
+	env := e
+	_, ok := e.store[name]
+	if !ok && e.outer != nil {
+		env, ok = e.outer.LookupEnvironment(name)
+	}
+	return env, ok
+}

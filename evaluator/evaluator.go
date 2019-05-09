@@ -63,10 +63,11 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if isError(val) {
 			return val
 		}
-		if _, ok := env.Get(node.Name.String()); !ok {
+		if e, ok := env.LookupEnvironment(node.Name.String()); !ok {
 			return newError("identifier not found: %s", node.Name.String())
+		} else {
+			e.Set(node.Name.String(), val)
 		}
-		env.Set(node.Name.String(), val)
 	case *ast.Identifier:
 		return evalIdentifier(node, env)
 	case *ast.FunctionLiteral:
