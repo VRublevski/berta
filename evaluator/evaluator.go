@@ -44,8 +44,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return evalBlockStatements(node, env)
 	case *ast.IfExpression:
 		return evalIfExpression(node, env)
-	case *ast.ForLoopExpression:
-		return evalForLoopxpression(node, env)
+	case *ast.ForLoopStatement:
+		return evalForLoopStatement(node, env)
 	case *ast.ReturnStatement:
 		val := Eval(node.ReturnValue, env)
 		if isError(val) {
@@ -446,7 +446,7 @@ func unwrawpReturnValue(obj object.Object) object.Object {
 	return obj
 }
 
-func evalForLoopxpression(fle *ast.ForLoopExpression, env *object.Environment) object.Object {
+func evalForLoopStatement(fle *ast.ForLoopStatement, env *object.Environment) object.Object {
 	if rtn, ok := fle.Init.(*ast.ReturnStatement); ok {
 		return newError("for loop initial declaration is invalid: %s", rtn.String())
 	}

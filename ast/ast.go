@@ -353,7 +353,7 @@ func (ie *IndexExpression) String() string {
 	return out.String()
 }
 
-type ForLoopExpression struct {
+type ForLoopStatement struct {
 	Token     token.Token
 	Init      Statement
 	Condition Expression
@@ -361,9 +361,9 @@ type ForLoopExpression struct {
 	Body      *BlockStatement
 }
 
-func (fle *ForLoopExpression) exprNode()            {}
-func (fle *ForLoopExpression) TokenLiteral() string { return fle.Token.Literal }
-func (fle *ForLoopExpression) String() string {
+func (fle *ForLoopStatement) stmtNode()            {}
+func (fle *ForLoopStatement) TokenLiteral() string { return fle.Token.Literal }
+func (fle *ForLoopStatement) String() string {
 	var out bytes.Buffer
 
 	out.WriteString("for ")

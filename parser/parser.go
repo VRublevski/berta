@@ -58,7 +58,6 @@ func New(l *lexer.Lexer) *Parser {
 	p := &Parser{l: l, errors: []string{}}
 
 	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
-	p.registerPrefix(token.FOR, p.parseForLoopExpression)
 	p.registerPrefix(token.FUNCTION, p.parseFunctionLiteral)
 	p.registerPrefix(token.IF, p.parseIfExpression)
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
@@ -119,6 +118,8 @@ func (p *Parser) parseStatement() ast.Statement {
 		return p.parseVarStatement()
 	case p.curToken.Type == token.RETURN:
 		return p.parseReturnStatement()
+	case p.curToken.Type == token.FOR:
+		return p.parseForLoopStatement()
 	case p.curToken.Type == token.IDENT && p.peekToken.Type == token.ASSIGN:
 		return p.parseAssignStatement()
 	default:
@@ -419,6 +420,10 @@ func (p *Parser) parseBlockStatement() *ast.BlockStatement {
 		p.nextToken()
 	}
 
+	if !p.curTokenIs(token.RBRACE) {
+		p.currentError(token.RBRACE)
+		return nil
+	}
 	return block
 }
 
@@ -504,8 +509,8 @@ func (p *Parser) parseExpressionList(end token.TokenType) []ast.Expression {
 	return list
 }
 
-func (p *Parser) parseForLoopExpression() ast.Expression {
-	expression := &ast.ForLoopExpression{Token: p.curToken}
+func (p *Parser) parseForLoopStatement() ast.Statement {
+	expression := &ast.ForLoopStatement{Token: p.curToken}
 
 	if !p.expectPeek(token.LPAREN) {
 		return nil
