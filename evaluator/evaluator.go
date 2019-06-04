@@ -451,18 +451,18 @@ func unwrawpReturnValue(obj object.Object) object.Object {
 }
 
 func evalForLoopStatement(fle *ast.ForLoopStatement, env *object.Environment) object.Object {
-	if rtn, ok := fle.Init.(*ast.ReturnStatement); ok {
-		return newError("for loop initial declaration is invalid: %s", rtn.String())
-	}
-
 	var (
 		obj         object.Object = NIL
 		extendedEnv *object.Environment
 	)
-	if _, ok := fle.Init.(*ast.VarStatement); ok {
-		extendedEnv = object.NewEnclosedEnvironment(env)
-	} else {
+
+	switch fle.Init.(type) {
+	case *ast.AssignStatement:
 		extendedEnv = env
+	case *ast.VarStatement:
+		extendedEnv = object.NewEnclosedEnvironment(env)
+	default:
+		return newError("for loop initial declaration is invalid: %s", fle.Init.String())
 	}
 
 	init := Eval(fle.Init, extendedEnv)
