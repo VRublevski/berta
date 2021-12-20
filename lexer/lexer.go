@@ -1,6 +1,6 @@
 package lexer
 
-import "github.com/user/courseWork/token"
+import "github.com/VRublevski/berta/token"
 
 //Can be rewritten with higher order functions
 

@@ -2,8 +2,10 @@ package evaluator
 
 import (
 	"fmt"
-	"github.com/user/courseWork/ast"
-	"github.com/user/courseWork/object"
+
+	"github.com/VRublevski/berta/object"
+
+	"github.com/VRublevski/berta/ast"
 )
 
 var (

@@ -4,13 +4,14 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"github.com/user/courseWork/ast"
-	"github.com/user/courseWork/evaluator"
-	"github.com/user/courseWork/lexer"
-	"github.com/user/courseWork/object"
-	"github.com/user/courseWork/parser"
 	"io"
 	"sync"
+
+	"github.com/VRublevski/berta/ast"
+	"github.com/VRublevski/berta/evaluator"
+	"github.com/VRublevski/berta/lexer"
+	"github.com/VRublevski/berta/object"
+	"github.com/VRublevski/berta/parser"
 )
 
 const PROMT = ">> "

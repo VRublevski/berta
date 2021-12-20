@@ -3,8 +3,9 @@ package object
 import (
 	"bytes"
 	"fmt"
-	"github.com/user/courseWork/ast"
 	"strings"
+
+	"github.com/VRublevski/berta/ast"
 )
 
 const (

@@ -2,10 +2,12 @@ package parser
 
 import (
 	"fmt"
-	"github.com/user/courseWork/ast"
-	"github.com/user/courseWork/lexer"
-	"github.com/user/courseWork/token"
 	"strconv"
+
+	"github.com/VRublevski/berta/ast"
+	"github.com/VRublevski/berta/lexer"
+
+	"github.com/VRublevski/berta/token"
 )
 
 const (
