@@ -1,10 +1,11 @@
 # An interpreter for Berta programming language.
 
-This repo contains source code for small programming language. 
+This repo contains source code for a small programming language. 
 The language is dynamically typed and supports  procedural paradygm. 
 The builtin types are booleans, ints, doubles, strings and arrays. 
 There is no a builtin support for compound types, e.g. structs, but this functionality can be implemented via closures, functions are first class objects in Berta language.
-Some examples of Berta language: 
+
+Some examples of programming in repl: 
 
 
 ```
@@ -39,7 +40,6 @@ Some examples of Berta language:
 
 ### Download and Install
 
-To install the interpreter you can simply clone the repositary, 
-open the repositary folder in your terminal and run
+To install the interpreter run:
 
-    go install ./main 
+    go get github.com/VRublevski/berta 
