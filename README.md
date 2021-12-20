@@ -40,6 +40,8 @@ Some examples of programming in repl:
 
 ### Download and Install
 
-To install the interpreter run:
+To install the interpreter clone the repository and invoke `go install` command:
 
-    go get github.com/VRublevski/berta 
+    git clone git@github.com:VRublevski/berta.git
+    cd berta 
+    go install main/berta.go
